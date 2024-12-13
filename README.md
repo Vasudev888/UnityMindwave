@@ -1,10 +1,5 @@
 # Mindwave Unity
 
-This is a Unity plugin for developping app and games with the *NeuroSky MindwaveMobile*, on the occasion of the [Serious Game Jam](https://www.eventbrite.fr/e/34697918408).
-
-## Compatibility
-
-This library works with Unity 2017.4, but has not been tested with older versions than Unity 2017.2.
 
 ## Installation
 
