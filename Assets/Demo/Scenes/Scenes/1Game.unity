@@ -2720,7 +2720,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &145084825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2782,7 +2782,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!224 &145084828
 RectTransform:
@@ -9975,7 +9975,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -36.3, y: 96.2}
+  m_AnchoredPosition: {x: -36.30005, y: 96.19995}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &554740890
@@ -18039,7 +18039,6 @@ GameObject:
   - component: {fileID: 1048228661}
   - component: {fileID: 1048228660}
   - component: {fileID: 1048228663}
-  - component: {fileID: 1048228664}
   - component: {fileID: 1048228665}
   - component: {fileID: 1048228668}
   - component: {fileID: 1048228670}
@@ -18118,19 +18117,6 @@ MonoBehaviour:
   usernameTextMesh: {fileID: 376578135}
   ageTextMesh: {fileID: 1036395839}
   companyNameTextMesh: {fileID: 618914453}
---- !u!114 &1048228664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1048228659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efc714303c197be489eb7ac819c8e21a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  websiteURL: https://www.apple.com/in/
 --- !u!114 &1048228665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18174,7 +18160,7 @@ MonoBehaviour:
     type: 3}
   canvasRect: {fileID: 2022694826}
   edgeMargin: 50
-  moveDuration: 1
+  moveDuration: 2
   rotationAngle: 360
   rawImage: {fileID: 236084859}
   heatmapTexture: {fileID: 0}
@@ -19434,7 +19420,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -22.2, y: 10.299988}
+  m_AnchoredPosition: {x: -22.199951, y: 10.300049}
   m_SizeDelta: {x: 320, y: 80}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1154262480
@@ -20522,7 +20508,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 906994673, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
       propertyPath: browserClient.engineStartupTimeout
-      value: 9000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 7454210984040730584, guid: eb44fadbfd943194e85df7faf3a9dc5b,
         type: 3}
@@ -27000,10 +26986,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2120048224}
-        m_TargetAssemblyTypeName: SocketClient, Assembly-CSharp
-        m_MethodName: ChangeImageSize
-        m_Mode: 1
+      - m_Target: {fileID: 2120048223}
+        m_TargetAssemblyTypeName: ShowBreakDown, Assembly-CSharp
+        m_MethodName: ScaleImageGameObject
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -34664,10 +34650,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2120048224}
-        m_TargetAssemblyTypeName: SocketClient, Assembly-CSharp
-        m_MethodName: CloseEnlargedPanel
-        m_Mode: 1
+      - m_Target: {fileID: 2120048223}
+        m_TargetAssemblyTypeName: ShowBreakDown, Assembly-CSharp
+        m_MethodName: DeScaleGameObject
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -35622,7 +35608,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!224 &2022694826
 RectTransform:
@@ -35977,7 +35963,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2056630148
 RectTransform:
   m_ObjectHideFlags: 0
@@ -35995,7 +35981,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -464}
   m_SizeDelta: {x: 320, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2056630149
@@ -36041,7 +36027,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2056630150}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1048228670}
+        m_TargetAssemblyTypeName: GridCalibrationUDP, Assembly-CSharp
+        m_MethodName: OnClickStartCalibration
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2056630150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38385,7 +38383,6 @@ GameObject:
   - component: {fileID: 2120048220}
   - component: {fileID: 2120048222}
   - component: {fileID: 2120048223}
-  - component: {fileID: 2120048224}
   - component: {fileID: 2120048227}
   - component: {fileID: 2120048226}
   - component: {fileID: 2120048225}
@@ -38454,36 +38451,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c35f8b67d48f2a4a940102c3b0da3f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 2132932927}
---- !u!114 &2120048224
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120048216}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e69bc283c2e283d4ca3c6b21ddc63853, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heatmapTexture: {fileID: 0}
-  heatmapWidth: 1920
-  heatmapHeight: 1080
-  brushSize: 30
-  intensity: 20
-  heatmapDisplay: {fileID: 187050011}
-  image: {fileID: 1333819912}
-  CloseButton: {fileID: 1964968980}
-  heatDecayRate: 0.99
-  redThreshold: 0.7
-  heatIntensityMultiplier: 0.2
-  maxDistance: 40
-  heatmapGenerator: {fileID: 2120048225}
-  calibrateScreenButton: {fileID: 391829211}
-  calibrateIrisButton: {fileID: 286680694}
-  calibrateExtraButton: {fileID: 734133397}
-  stopCalibrationButton: {fileID: 1517944701}
+  canvas: {fileID: 1333819910}
+  closeButton: {fileID: 1964968980}
 --- !u!114 &2120048225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38917,7 +38886,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &2132932931
 RectTransform:

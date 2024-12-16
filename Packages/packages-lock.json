@@ -1,20 +1,11 @@
 {
   "dependencies": {
     "com.cysharp.unitask": {
-      "version": "2.5.3",
-      "depth": 1,
+      "version": "2.5.10",
+      "depth": 3,
       "source": "registry",
       "dependencies": {},
       "url": "https://upm-pkgs.voltstro.dev"
-    },
-    "com.github.homuler.mediapipe": {
-      "version": "file:com.github.homuler.mediapipe",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.ugui": "1.0.0",
-        "com.unity.test-framework": "1.0.0"
-      }
     },
     "com.monitor1394.xcharts": {
       "version": "https://github.com/XCharts-Team/XCharts.git",
@@ -282,38 +273,38 @@
       "url": "https://upm-pkgs.voltstro.dev"
     },
     "dev.voltstro.unitywebbrowser": {
-      "version": "2.1.1",
-      "depth": 0,
+      "version": "2.2.5",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
         "dev.voltstro.nativearrayspanextensions": "1.0.1",
         "com.unity.nuget.newtonsoft-json": "3.2.1",
-        "com.cysharp.unitask": "2.5.3",
-        "org.nuget.voltrpc": "3.2.0"
+        "com.cysharp.unitask": "2.5.10",
+        "org.nuget.voltrpc": "3.2.1"
       },
       "url": "https://upm-pkgs.voltstro.dev"
     },
     "dev.voltstro.unitywebbrowser.engine.cef": {
-      "version": "2.1.1-122.1.13",
+      "version": "2.2.5-130.1.16",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "dev.voltstro.unitywebbrowser": "2.1.1"
+        "dev.voltstro.unitywebbrowser": "2.2.5"
       },
       "url": "https://upm-pkgs.voltstro.dev"
     },
     "dev.voltstro.unitywebbrowser.engine.cef.win.x64": {
-      "version": "2.1.1-122.1.13",
+      "version": "2.2.5-130.1.16",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "dev.voltstro.unitywebbrowser.engine.cef": "2.1.1-122.1.13"
+        "dev.voltstro.unitywebbrowser.engine.cef": "2.2.5-130.1.16"
       },
       "url": "https://upm-pkgs.voltstro.dev"
     },
     "org.nuget.voltrpc": {
-      "version": "3.2.0",
-      "depth": 1,
+      "version": "3.2.1",
+      "depth": 3,
       "source": "registry",
       "dependencies": {},
       "url": "https://upm-pkgs.voltstro.dev"
