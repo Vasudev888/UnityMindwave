@@ -8,7 +8,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
 
-public class GridCalibrationUDP : MonoBehaviour
+public class GridCalibrationUDPOrig : MonoBehaviour
 {
     #region Grid 
     [Header("Grid Settings")]
@@ -70,6 +70,7 @@ public class GridCalibrationUDP : MonoBehaviour
     [SerializeField] private Image gridImageResult;               // Reference to the image to be manipulated
     [SerializeField] private GameObject closeButton;    // Reference to the close button GameObject
     [SerializeField] private GameObject calibrationCompletePanel;
+    //[SerializeField] private TextMeshPro calibrationCompleteText;
     #endregion
 
     #region Unity Lifecycle Methods
@@ -106,12 +107,12 @@ public class GridCalibrationUDP : MonoBehaviour
         targetInstance.anchoredPosition = leftMid; // Start position
 
         // Set up the button listener on the target prefab
-/*        Button targetButton = targetInstance.GetComponent<Button>();
+        Button targetButton = targetInstance.GetComponent<Button>();
         if (targetButton != null)
         {
             targetButton.onClick.AddListener(OnTargetButtonClick);
             Debug.Log("Button Clicked: " + targetButton);
-        }*/
+        }
 
         // Initialize heatmap data array for storing intensity values
         heatmapData = new float[heatmapWidth, heatmapHeight];
@@ -134,17 +135,6 @@ public class GridCalibrationUDP : MonoBehaviour
             heatmapDisplay.texture = heatmapTexture;
 
         }
-
-
-    }
-
-    public void OnClickStartCalibration()
-    {
-
-        // Start the calibration process automatically
-        BeginCalibration();
-        //startCalibrationButton.SetActive(false);
-
     }
 
 
@@ -267,10 +257,40 @@ public class GridCalibrationUDP : MonoBehaviour
     /// </summary>
     /// <param name="xCenter">X-coordinate of the brush center.</param>
     /// <param name="yCenter">Y-coordinate of the brush center.</param>
+    /*private void ApplyBrush(int xCenter, int yCenter)
+    {
+        int radius = brushSize / 2;
+
+        // Loop through a square area around the center point
+        for (int x = xCenter - radius; x <= xCenter + radius; x++)
+        {
+            for (int y = yCenter - radius; y <= yCenter + radius; y++)
+            {
+                // Check if the coordinates are within the heatmap bounds
+                if (x >= 0 && x < heatmapWidth && y >= 0 && y < heatmapHeight)
+                {
+                    // Calculate the distance from the center
+                    float distance = Vector2.Distance(new Vector2(x, y), new Vector2(xCenter, yCenter));
+                    if (distance <= radius)
+                    {
+                        // Calculate intensity addition based on distance
+                        float addition = intensity * (1 - (distance / radius));
+                        heatmapData[x, y] += addition;
+
+                        // Update pixel color based on heatmapData
+                        float alpha = Mathf.Clamp01(heatmapData[x, y]);
+                        Color color = new Color(1f, 0f, 0f, alpha); // Red color with variable transparency
+                        heatmapTexture.SetPixel(x, y, color);
+                    }
+                }
+            }
+        }
+    }
+*/
     private void ApplyBrush(int xCenter, int yCenter)
     {
         int radius = brushSize / 2;
-       
+
 
         // Choose a sigma value for Gaussian spread (adjust to taste).
         // A third of the radius is a common choice, but you can tweak this.
@@ -371,23 +391,9 @@ public class GridCalibrationUDP : MonoBehaviour
     /// Handles the click event on the calibration target button.
     /// Decides which calibration command to send based on the current calibration type.
     /// </summary>
-    /// 
-
-    private void BeginCalibration()
+    private void OnTargetButtonClick()
     {
-        // Start from the first position
-        currentCalibrationType = CalibrationType.Screen;
-        currentIndex = 0;
-        iterationCount = 0;
-        isCalibrationActive = true;
-        MoveToNextPosition();
-    }
-
-
-    // Called when the tween finishes
-    private void OnMovementComplete()
-    {
-        // Send the appropriate calibration command for the current type and index
+        // Determine which calibration command to send based on the current calibration type
         switch (currentCalibrationType)
         {
             case CalibrationType.Screen:
@@ -401,46 +407,9 @@ public class GridCalibrationUDP : MonoBehaviour
                 break;
         }
 
-        // Now move to the next position if calibration is still ongoing
-        if (isCalibrationActive)
-        {
-            //AdvanceIndexAndIteration();
-            MoveToNextPosition();
-        }
+        // Move to the next calibration position
+        MoveToNextPosition();
     }
-
-    private void AdvanceIndexAndIteration()
-    {
-        currentIndex++;
-        if (currentIndex >= 4)
-        {
-            currentIndex = 0;
-            iterationCount++;
-            // Check if we need to switch calibration types or end calibration
-            // This logic already exists in your code - just refactor it here
-        }
-    }
-
-
-    /*    private void OnTargetButtonClick()
-        {
-            // Determine which calibration command to send based on the current calibration type
-            switch (currentCalibrationType)
-            {
-                case CalibrationType.Screen:
-                    SendScreenCalibrationCommand();
-                    break;
-                case CalibrationType.Iris:
-                    SendIrisCalibrationCommand();
-                    break;
-                case CalibrationType.Extra:
-                    SendExtraCalibrationCommand();
-                    break;
-            }
-
-            // Move to the next calibration position
-            MoveToNextPosition();
-        }*/
 
     // ===================================
     // Calibration Command Methods
@@ -635,8 +604,7 @@ public class GridCalibrationUDP : MonoBehaviour
         float rotationDirection = (currentIndex % 2 == 0) ? -rotationAngle : rotationAngle;
 
         // Move and rotate the target to the new position
-        targetInstance.DOAnchorPos(targetPosition, moveDuration).SetEase(Ease.Linear).OnComplete(() => OnMovementComplete()); // Call OnMovementComplete when movement finishes
-
+        targetInstance.DOAnchorPos(targetPosition, moveDuration).SetEase(Ease.Linear);
         targetInstance.DORotate(new Vector3(0, 0, rotationDirection), moveDuration, RotateMode.LocalAxisAdd);
 
         Debug.Log($"Moved to position: {targetPosition}, Rotation: {rotationDirection}");
@@ -676,17 +644,17 @@ public class GridCalibrationUDP : MonoBehaviour
             // Set the panel active to show it
             calibrationCompletePanel.SetActive(true);
 
-   /*         if (calibrationCompleteText != null)
-            {
-                calibrationCompleteText.text = "Calibration is complete.\nClick on Close button to proceed Next.";
-            }*/
+            /*         if (calibrationCompleteText != null)
+                     {
+                         calibrationCompleteText.text = "Calibration is complete.\nClick on Close button to proceed Next.";
+                     }*/
 
-          /*  if (closeCalibrationButton != null)
-            {
-                // Assign a listener to the close button (if not already assigned)
-                closeCalibrationButton.onClick.RemoveAllListeners();
-                closeCalibrationButton.onClick.AddListener(CloseCalibrationCompleteUI);
-            }*/
+            /*  if (closeCalibrationButton != null)
+              {
+                  // Assign a listener to the close button (if not already assigned)
+                  closeCalibrationButton.onClick.RemoveAllListeners();
+                  closeCalibrationButton.onClick.AddListener(CloseCalibrationCompleteUI);
+              }*/
         }
     }
 
