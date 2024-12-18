@@ -56,6 +56,10 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     //Calculation for EngagementScore
     float weightAttentionC = 0.7f, weightMeditationC = 0.3f;
     [SerializeField] TextMeshProUGUI engagementScoreTextField;
+    //Average vlaue for Engagement score
+    float totalAttention = 0f;
+    float totalMeditation = 0f;
+
 
     public float CalculateEngagementScore(float attention, float meditation)
     {
@@ -191,8 +195,8 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
         }
 
         // calculate the engagement score using these values
-        float engagementScore = CalculateEngagementScore(attentionValue, meditationValue);
-        engagementScoreTextField.text = engagementScore.ToString();
+
+
 
         // Optionally update UI
         if (attentionFillImage != null)
@@ -256,6 +260,7 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     // Save the captured EEG data to a CSV file
     private void SaveToCSV()
     {
+        int count = eegDataList.Count;
         string filePath = Path.Combine(Application.persistentDataPath, "EEGData_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv");
         StringBuilder csvContent = new StringBuilder();
 
@@ -269,6 +274,22 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
         foreach (EEGData data in eegDataList)
         {
             csvContent.AppendLine(data.ToCSV());
+            totalAttention += data.attentionValue;       // Assuming EEGData has a .Attention property
+            totalMeditation += data.meditationValue;     // And a .Meditation property
+
+        }
+
+        if (count > 0)
+        {
+
+            float avgAttention = totalAttention / count;
+            float avgMeditation = totalMeditation / count;
+            float engagementScore = CalculateEngagementScore(avgAttention, avgMeditation);
+            engagementScoreTextField.text = engagementScore.ToString();
+        }
+        else
+        {
+            engagementScoreTextField.text = "No Data";
         }
         PlaceDotsOnScreen(eegDataList);
 
