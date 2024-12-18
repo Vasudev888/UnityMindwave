@@ -39043,7 +39043,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d60e179d9870547ae129250e0d3d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 145084824}
+  webComponent: {fileID: 0}
+  browserCanavas: {fileID: 0}
 --- !u!114 &2120048223
 MonoBehaviour:
   m_ObjectHideFlags: 0
