@@ -106,12 +106,12 @@ public class GridCalibrationUDP : MonoBehaviour
         targetInstance.anchoredPosition = leftMid; // Start position
 
         // Set up the button listener on the target prefab
-/*        Button targetButton = targetInstance.GetComponent<Button>();
-        if (targetButton != null)
-        {
-            targetButton.onClick.AddListener(OnTargetButtonClick);
-            Debug.Log("Button Clicked: " + targetButton);
-        }*/
+        /*        Button targetButton = targetInstance.GetComponent<Button>();
+                if (targetButton != null)
+                {
+                    targetButton.onClick.AddListener(OnTargetButtonClick);
+                    Debug.Log("Button Clicked: " + targetButton);
+                }*/
 
         // Initialize heatmap data array for storing intensity values
         heatmapData = new float[heatmapWidth, heatmapHeight];
@@ -270,7 +270,7 @@ public class GridCalibrationUDP : MonoBehaviour
     private void ApplyBrush(int xCenter, int yCenter)
     {
         int radius = brushSize / 2;
-       
+
 
         // Choose a sigma value for Gaussian spread (adjust to taste).
         // A third of the radius is a common choice, but you can tweak this.
@@ -377,9 +377,10 @@ public class GridCalibrationUDP : MonoBehaviour
     {
         // Start from the first position
         currentCalibrationType = CalibrationType.Screen;
-        currentIndex = 0;
+        currentIndex = -1;
         iterationCount = 0;
         isCalibrationActive = true;
+        //SendScreenCalibrationCommand();
         MoveToNextPosition();
     }
 
@@ -404,43 +405,9 @@ public class GridCalibrationUDP : MonoBehaviour
         // Now move to the next position if calibration is still ongoing
         if (isCalibrationActive)
         {
-            //AdvanceIndexAndIteration();
             MoveToNextPosition();
         }
     }
-
-    private void AdvanceIndexAndIteration()
-    {
-        currentIndex++;
-        if (currentIndex >= 4)
-        {
-            currentIndex = 0;
-            iterationCount++;
-            // Check if we need to switch calibration types or end calibration
-            // This logic already exists in your code - just refactor it here
-        }
-    }
-
-
-    /*    private void OnTargetButtonClick()
-        {
-            // Determine which calibration command to send based on the current calibration type
-            switch (currentCalibrationType)
-            {
-                case CalibrationType.Screen:
-                    SendScreenCalibrationCommand();
-                    break;
-                case CalibrationType.Iris:
-                    SendIrisCalibrationCommand();
-                    break;
-                case CalibrationType.Extra:
-                    SendExtraCalibrationCommand();
-                    break;
-            }
-
-            // Move to the next calibration position
-            MoveToNextPosition();
-        }*/
 
     // ===================================
     // Calibration Command Methods
@@ -581,6 +548,8 @@ public class GridCalibrationUDP : MonoBehaviour
     /// </summary>
     private void MoveToNextPosition()
     {
+        currentIndex++;
+
         if (!isCalibrationActive)
         {
             Debug.Log("Calibration is complete. No further movements.");
@@ -588,48 +557,69 @@ public class GridCalibrationUDP : MonoBehaviour
         }
 
         // Determine the target position based on the current iteration
-        Vector2 targetPosition = iterationCount < 2 ? primaryPositions[currentIndex] : extraPositions[currentIndex];
+        //Vector2 targetPosition = iterationCount < 2 ? primaryPositions[currentIndex] : extraPositions[currentIndex];
 
         // Check if the target is already at the desired position
-        if (targetInstance.anchoredPosition == targetPosition)
+/*        if (targetInstance.anchoredPosition == targetPosition)
         {
             Debug.Log($"Prefab is already at position {targetPosition}. Moving to the next position.");
 
             // Move to the next index
-            currentIndex++;
 
-            // Check if we've completed a full set of positions
-            if (currentIndex >= 4)
+            currentIndex++;*/
+        // Check if we've completed a full set of positions
+        if (currentIndex >= 4)
+        {
+            currentIndex = 0;      // Reset index for the next set
+            iterationCount++;      // Increment the iteration count
+            Debug.Log($"Iteration completed. CurrentCalibrationType: {currentCalibrationType}");
+
+            // Transition to the next calibration type if necessary
+            if (iterationCount == 2)
             {
-                currentIndex = 0;      // Reset index for the next set
-                iterationCount++;      // Increment the iteration count
-                Debug.Log($"Iteration completed. CurrentCalibrationType: {currentCalibrationType}");
-
-                // Transition to the next calibration type if necessary
-                if (iterationCount == 2)
+                switch (currentCalibrationType)
                 {
-                    switch (currentCalibrationType)
-                    {
-                        case CalibrationType.Screen:
-                            currentCalibrationType = CalibrationType.Iris;
-                            Debug.Log("Switching to Iris Calibration.");
-                            break;
+                    case CalibrationType.Screen:
+                        currentCalibrationType = CalibrationType.Iris;
+                        Debug.Log("Switching to Iris Calibration.");
+                        break;
 
-                        case CalibrationType.Iris:
-                            currentCalibrationType = CalibrationType.Extra;
-                            Debug.Log("Switching to Extra Calibration.");
-                            break;
+                    case CalibrationType.Iris:
+                        currentCalibrationType = CalibrationType.Extra;
+                        Debug.Log("Switching to Extra Calibration.");
+                        break;
 
-                        case CalibrationType.Extra:
-                            Debug.Log("Calibration complete!");
-                            break;
-                    }
+                    case CalibrationType.Extra:
+                        Debug.Log("Calibration complete!");
+                        break;
                 }
+                iterationCount = 0; // Reset iteration count for the next calibration type
             }
-
-            // Recalculate the target position after index change
-            targetPosition = iterationCount < 2 ? primaryPositions[currentIndex] : extraPositions[currentIndex];
         }
+
+        Vector2 targetPosition;
+        switch (currentCalibrationType)
+        {
+            case CalibrationType.Screen:
+            case CalibrationType.Iris:
+                // For Screen and Iris, use primaryPositions
+                targetPosition = primaryPositions[currentIndex];
+                break;
+
+            case CalibrationType.Extra:
+                // For Extra calibration, use extraPositions
+                targetPosition = extraPositions[currentIndex];
+                break;
+
+            default:
+                // Fallback to primaryPositions if something unexpected happens
+                targetPosition = primaryPositions[currentIndex];
+                break;
+        }
+
+        // Recalculate the target position after index change
+        //targetPosition = iterationCount < 2 ? primaryPositions[currentIndex] : extraPositions[currentIndex];
+       
 
         // Calculate rotation direction based on the current index
         float rotationDirection = (currentIndex % 2 == 0) ? -rotationAngle : rotationAngle;
@@ -676,17 +666,17 @@ public class GridCalibrationUDP : MonoBehaviour
             // Set the panel active to show it
             calibrationCompletePanel.SetActive(true);
 
-   /*         if (calibrationCompleteText != null)
-            {
-                calibrationCompleteText.text = "Calibration is complete.\nClick on Close button to proceed Next.";
-            }*/
+            /*         if (calibrationCompleteText != null)
+                     {
+                         calibrationCompleteText.text = "Calibration is complete.\nClick on Close button to proceed Next.";
+                     }*/
 
-          /*  if (closeCalibrationButton != null)
-            {
-                // Assign a listener to the close button (if not already assigned)
-                closeCalibrationButton.onClick.RemoveAllListeners();
-                closeCalibrationButton.onClick.AddListener(CloseCalibrationCompleteUI);
-            }*/
+            /*  if (closeCalibrationButton != null)
+              {
+                  // Assign a listener to the close button (if not already assigned)
+                  closeCalibrationButton.onClick.RemoveAllListeners();
+                  closeCalibrationButton.onClick.AddListener(CloseCalibrationCompleteUI);
+              }*/
         }
     }
 
