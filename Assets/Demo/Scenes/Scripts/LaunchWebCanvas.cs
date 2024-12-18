@@ -1,32 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 public class LaunchWebCanvas : MonoBehaviour
 {
-    // Start is called before the first frame update
-    [SerializeField] private GameObject canvas;
-    public void EnableGameObject(bool enable)
+    [SerializeField] GameObject webComponent;
+    [SerializeField] GameObject browserCanavas;
+ 
+
+    public void ScaleImageGameObject()
     {
-        if (canvas != null)
-        {
-            canvas.SetActive(true);
-        }
-        else
-        {
-            Debug.LogError("Target GameObject is not assigned.");
-        }
+
+        webComponent.transform.localScale = new Vector3(1, 1, 1);
+
+        Debug.Log("callING ScaleImageGameObject");
+
+
     }
 
-    public void DisableGameObject(bool enable)
+
+    public void DisableWebCanvas()
     {
-        if (canvas != null)
-        {
-            canvas.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("Target GameObject is not assigned.");
-        }
+        browserCanavas.SetActive(false);
     }
 }
