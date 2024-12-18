@@ -9,7 +9,11 @@ EditorBuildSettings:
     path: Assets/Demo/Scenes/Scenes/0UI.unity
     guid: e8ecbe9831625e047bca086b168fbb3f
   - enabled: 1
+<<<<<<< HEAD
     path: Assets/Demo/Scenes/Scenes/1Game_Nidhi.unity
+=======
+    path: Assets/Demo/Scenes/Scenes/1GameVasu.unity
+>>>>>>> 64ea396532f8c6eb3452aede7cbf9dd00a23d227
     guid: 623ed43be40bb1d4788fd0bcb6b9b96e
   - enabled: 0
     path: Assets/Demo/Scenes/Scenes/TestHeatmap.unity
