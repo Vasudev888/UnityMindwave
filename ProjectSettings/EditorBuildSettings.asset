@@ -10,6 +10,7 @@ EditorBuildSettings:
     guid: e8ecbe9831625e047bca086b168fbb3f
   - enabled: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
     path: Assets/Demo/Scenes/Scenes/1Game_Nidhi.unity
 =======
     path: Assets/Demo/Scenes/Scenes/1GameVasu.unity
@@ -24,4 +25,11 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Demo/Scenes/Scenes/Game_MainScene.unity
     guid: 1b5d2b647b7ba4c469594e497a7aa800
+=======
+    path: Assets/1GameFinal.unity
+    guid: 68e9ae2ff11a6fe4caab73376873ee77
+  - enabled: 0
+    path: Assets/Demo/Scenes/Scenes/TestHeatmap.unity
+    guid: 0d7662ab9b79ff04ca8016344dc0c6c1
+>>>>>>> 136e44d98b6207d358acb16d61b799526567c6b2
   m_configObjects: {}
