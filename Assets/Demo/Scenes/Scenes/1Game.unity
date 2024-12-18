@@ -2797,7 +2797,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1238462660}
-  - {fileID: 187050010}
   - {fileID: 1154262479}
   - {fileID: 1361892066}
   m_Father: {fileID: 0}
@@ -4301,12 +4300,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 145084828}
+  m_Father: {fileID: 1238462660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -11.1, y: 0}
-  m_SizeDelta: {x: 1897.8, y: 1080}
+  m_SizeDelta: {x: 1885.83, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &187050011
 MonoBehaviour:
@@ -4321,7 +4320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.45490196}
+  m_Color: {r: 0.9924528, g: 0.9868352, b: 0.9868352, a: 0.45490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9975,7 +9974,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -36.30005, y: 96.19995}
+  m_AnchoredPosition: {x: -1506, y: 756}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &554740890
@@ -13072,8 +13071,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2120048222}
         m_TargetAssemblyTypeName: LaunchWebCanvas, Assembly-CSharp
-        m_MethodName: EnableGameObject
-        m_Mode: 6
+        m_MethodName: ScaleImageGameObject
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -18160,7 +18159,7 @@ MonoBehaviour:
     type: 3}
   canvasRect: {fileID: 2022694826}
   edgeMargin: 50
-  moveDuration: 2
+  moveDuration: 3
   rotationAngle: 360
   rawImage: {fileID: 236084859}
   heatmapTexture: {fileID: 0}
@@ -19469,8 +19468,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2120048222}
         m_TargetAssemblyTypeName: LaunchWebCanvas, Assembly-CSharp
-        m_MethodName: DisableGameObject
-        m_Mode: 6
+        m_MethodName: DisableWebCanvas
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -20500,7 +20499,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 906994673, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
       propertyPath: browserClient.logSeverity
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 906994673, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
+      propertyPath: browserClient.remoteDebugging
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 906994673, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
       propertyPath: browserClient.resolution.Height
@@ -20508,7 +20511,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 906994673, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
       propertyPath: browserClient.engineStartupTimeout
-      value: 10000
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7454210983584133261, guid: eb44fadbfd943194e85df7faf3a9dc5b,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7454210983584133261, guid: eb44fadbfd943194e85df7faf3a9dc5b,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7454210983584133261, guid: eb44fadbfd943194e85df7faf3a9dc5b,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7454210983584133262, guid: eb44fadbfd943194e85df7faf3a9dc5b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7454210984040730584, guid: eb44fadbfd943194e85df7faf3a9dc5b,
         type: 3}
@@ -20573,17 +20596,17 @@ PrefabInstance:
     - target: {fileID: 7454210984458747694, guid: eb44fadbfd943194e85df7faf3a9dc5b,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7454210984458747694, guid: eb44fadbfd943194e85df7faf3a9dc5b,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7454210984458747694, guid: eb44fadbfd943194e85df7faf3a9dc5b,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7454210984458747694, guid: eb44fadbfd943194e85df7faf3a9dc5b,
         type: 3}
@@ -20647,7 +20670,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7454210984458747694, guid: eb44fadbfd943194e85df7faf3a9dc5b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 187050010}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
 --- !u!224 &1238462660 stripped
@@ -24635,6 +24662,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1361892065}
   m_CullTransparentMesh: 1
+--- !u!1 &1363506883 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7454210984458747666, guid: eb44fadbfd943194e85df7faf3a9dc5b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1238462659}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1363974377
 GameObject:
   m_ObjectHideFlags: 0
@@ -38438,7 +38471,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d60e179d9870547ae129250e0d3d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 145084824}
+  webComponent: {fileID: 1363506883}
+  browserCanavas: {fileID: 145084824}
 --- !u!114 &2120048223
 MonoBehaviour:
   m_ObjectHideFlags: 0
