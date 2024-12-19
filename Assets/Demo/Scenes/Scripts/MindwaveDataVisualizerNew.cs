@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.IO;
 using System;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class MindwaveDataVisualizerNew : MonoBehaviour
 {
@@ -305,10 +306,22 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     public void PlaceDotsOnScreen(List<EEGData> eegDataList)
     {
         List<GameObject> dotList = new List<GameObject>();  // To store instantiated dots for later use
+        List<EEGData> sortedList = eegDataList.OrderByDescending(e => e.attentionValue).ToList();
+
         float highestAttention = -1f;
         float secondHighestAttention = -1f;
         //int highestAttentionDotIndex = -1;
         int secondHighestAttentionDotIndex = -1;
+
+
+        // Take only the top 4 entries (or fewer if less than 4 available)
+        int count = Mathf.Min(sortedList.Count, 4);
+
+        if (count == 0)
+        {
+            Debug.LogWarning("No EEG data to plot.");
+            return;
+        }
 
         // First pass: Find highest and second-highest attention values
         for (int i = 0; i < eegDataList.Count; i++)
@@ -330,7 +343,7 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
         }
 
         // Second pass: Place dots and set colors based on attention values
-        for (int i = 0; i < eegDataList.Count && i < 4; i++)
+        for (int i = 0; i < count && i < 4; i++)
         {
             EEGData eeg = eegDataList[i];
 
@@ -347,9 +360,9 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
             Image dotImage = dot.GetComponent<Image>();
             if (dotImage != null)
             {
-                if (i == highestAttentionDotIndex)
+                if (i == 0)
                     dotImage.color = Color.red;           // Highest attention dot is red
-                else if (i == secondHighestAttentionDotIndex)
+                else if (i == 1)
                     dotImage.color = new Color(1f, 0.5f, 0f);  // Second highest is orange
                 else
                     dotImage.color = Color.green;         // Remaining dots are green
@@ -368,9 +381,9 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
         }
 
         // Display the highest attention dot index if UI element is available
-        if (highestAttentionValuePoint != null && highestAttentionDotIndex >= 0 && highestAttentionDotIndex < 4)
+        if (highestAttentionValuePoint != null && count > 0)
         {
-            highestAttentionValuePoint.text = $"  {highestAttentionDotIndex + 1}";  // Display 1-based index
+            highestAttentionValuePoint.text = "  1";  // Display 1-based index
         }
 
         // Connect the dots with dotted lines
