@@ -18,9 +18,7 @@ public class GridCalibrationUDP : MonoBehaviour
     [SerializeField] private float edgeMargin = 50f;     // Margin from edges to avoid truncation
     [SerializeField] private float moveDuration = 2f;    // Duration for each move, adjustable in the inspector
     [SerializeField] private float rotationAngle = 360f; // Full rotation angle for each move
-    [SerializeField] private Image progressFillImage; // Assign your fill image in the inspector
-    [SerializeField] private int totalTurns = 12;
-    private int currentTurn = 0;
+    
     #endregion
 
     #region Client-related Variables
@@ -74,6 +72,10 @@ public class GridCalibrationUDP : MonoBehaviour
     [SerializeField] private Image gridImageResult;               // Reference to the image to be manipulated
     [SerializeField] private GameObject closeButton;    // Reference to the close button GameObject
     [SerializeField] private GameObject calibrationCompletePanel;
+    [SerializeField] private Image progressFillImage; // Assign your fill image in the inspector
+    [SerializeField] private int totalTurns = 12;
+    private int currentTurn = 0;
+    public AudioSource audioSource;
     #endregion
 
     #region Unity Lifecycle Methods
@@ -159,6 +161,16 @@ public class GridCalibrationUDP : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space)) // Press Space to simulate progress
+        {
+            currentTurn = Mathf.Clamp(currentTurn + 1, 0, totalTurns);
+
+            if (progressFillImage != null)
+            {
+                progressFillImage.fillAmount += 0.1f;
+               // Debug.Log($"Fill Amount Updated: {fillAmount}");
+            }
+        }
         // Receive data from the UDP client
         while (udpClient != null && udpClient.Available > 0)
         {
@@ -588,6 +600,7 @@ public class GridCalibrationUDP : MonoBehaviour
                 // Send the command via UDP to the Python server at port 5001
                 sendUdpClient.Send(data, data.Length, "127.0.0.1", 5001);
                 Debug.Log("Sent command: " + command);
+                audioSource.Play();
             }
             catch (Exception e)
             {
@@ -609,6 +622,7 @@ public class GridCalibrationUDP : MonoBehaviour
 
         #region to fill UI progress bar
         // Increment the current turn count
+        Debug.Log(" progressFillImage.fillAmount +++++++++++++++++++++++++++++++++++++++ " + progressFillImage.fillAmount);
         currentTurn = Mathf.Clamp(currentTurn + 1, 0, totalTurns); // Ensure it doesn't exceed totalTurns
 
         // Update the fill image
@@ -692,7 +706,6 @@ public class GridCalibrationUDP : MonoBehaviour
             default:
                 // Fallback to primaryPositions if something unexpected happens
                 targetPosition = primaryPositions[currentIndex];
-                //####
                 break;
         }
 
