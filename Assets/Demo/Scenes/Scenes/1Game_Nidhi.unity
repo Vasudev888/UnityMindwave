@@ -18614,8 +18614,8 @@ MonoBehaviour:
   heatmapTexture: {fileID: 0}
   heatmapWidth: 1920
   heatmapHeight: 1080
-  brushSize: 200
-  intensity: 0.1
+  brushSize: 120
+  intensity: 1
   heatmapDisplay: {fileID: 187050011}
   orangeIntensity: 1
   gridImageResult: {fileID: 1333819912}
@@ -21230,7 +21230,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 906994673, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
       propertyPath: browserClient.initialUrl
-      value: https://www.meesho.com/
+      value: https://www.amazon.in/
       objectReference: {fileID: 0}
     - target: {fileID: 906994673, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
       propertyPath: browserClient.logSeverity
