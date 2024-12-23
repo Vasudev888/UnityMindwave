@@ -267,7 +267,7 @@ public class GridCalibrationUDP : MonoBehaviour
     /// </summary>
     /// <param name="xCenter">X-coordinate of the brush center.</param>
     /// <param name="yCenter">Y-coordinate of the brush center.</param>
-    private void ApplyBrush(int xCenter, int yCenter)
+/*    private void ApplyBrush(int xCenter, int yCenter)
     {
         int radius = brushSize / 2;
 
@@ -321,7 +321,58 @@ public class GridCalibrationUDP : MonoBehaviour
 
         // Apply all pixel changes to the texture at once for efficiency
         heatmapTexture.Apply();
+    }*/
+
+    private void ApplyBrush(int xCenter, int yCenter)
+    {
+        int radius = brushSize / 2;
+
+        // Sigma value for Gaussian spread
+        float sigma = radius / 3f;
+        float twoSigmaSquare = 2 * sigma * sigma;
+
+        for (int x = xCenter - radius; x <= xCenter + radius; x++)
+        {
+            for (int y = yCenter - radius; y <= yCenter + radius; y++)
+            {
+                // Ensure coordinates are within bounds
+                if (x >= 0 && x < heatmapWidth && y >= 0 && y < heatmapHeight)
+                {
+                    // Distance from the brush center
+                    float dx = x - xCenter;
+                    float dy = y - yCenter;
+                    float distanceSquare = dx * dx + dy * dy;
+
+                    if (distanceSquare <= radius * radius)
+                    {
+                        // Gaussian intensity calculation
+                        float gaussian = Mathf.Exp(-distanceSquare / twoSigmaSquare);
+                        float addition = intensity * gaussian;
+                        heatmapData[x, y] += addition;
+
+                        // Clamp the intensity between 0 and 1
+                        float clampedIntensity = Mathf.Clamp01(heatmapData[x, y]);
+
+                        // Color interpolation from green to orange
+                        Color startColor = Color.green;  // Starting color at low intensity
+                        Color targetColor = new Color(1f, 0.5f, 0f, 1f);  // Orange at high intensity
+                        Color finalColor = Color.Lerp(startColor, targetColor, clampedIntensity);
+
+                        // Ensure alpha is proportional to intensity for smooth blending
+                        finalColor.a = clampedIntensity;
+                        int invertedY = (heatmapHeight - 1) - y;
+
+                        // Update heatmap texture pixel
+                        heatmapTexture.SetPixel(x, invertedY, finalColor);
+                    }
+                }
+            }
+        }
+
+        // Apply changes to the texture
+        heatmapTexture.Apply();
     }
+
 
     public void ToggleBrushApplication()
     {
