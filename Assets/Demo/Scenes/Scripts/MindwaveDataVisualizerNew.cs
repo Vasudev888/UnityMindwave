@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.IO;
 using System;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class MindwaveDataVisualizerNew : MonoBehaviour
 {
@@ -305,13 +306,25 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     public void PlaceDotsOnScreen(List<EEGData> eegDataList)
     {
         List<GameObject> dotList = new List<GameObject>();  // To store instantiated dots for later use
-        float highestAttention = -1f;
+        List<EEGData> sortedList = eegDataList.OrderByDescending(e => e.attentionValue).ToList();
+
+/*        float highestAttention = -1f;
         float secondHighestAttention = -1f;
         //int highestAttentionDotIndex = -1;
         int secondHighestAttentionDotIndex = -1;
+*/
+
+        // Take only the top 4 entries (or fewer if less than 4 available)
+        int count = Mathf.Min(sortedList.Count, 4);
+
+        if (count == 0)
+        {
+            Debug.LogWarning("No EEG data to plot.");
+            return;
+        }
 
         // First pass: Find highest and second-highest attention values
-        for (int i = 0; i < eegDataList.Count; i++)
+/*        for (int i = 0; i < eegDataList.Count; i++)
         {
             float attentionValue = eegDataList[i].attentionValue;
             if (attentionValue > highestAttention)
@@ -327,12 +340,12 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
                 secondHighestAttention = attentionValue;
                 secondHighestAttentionDotIndex = i;
             }
-        }
+        }*/
 
         // Second pass: Place dots and set colors based on attention values
-        for (int i = 0; i < eegDataList.Count && i < 4; i++)
+        for (int i = 0; i < count; i++)
         {
-            EEGData eeg = eegDataList[i];
+            EEGData eeg = sortedList[i];
 
             // Map the gaze position to canvas space
             Vector2 screenPosition = MapToScreenSpace(eeg.gazePosition);
@@ -347,9 +360,9 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
             Image dotImage = dot.GetComponent<Image>();
             if (dotImage != null)
             {
-                if (i == highestAttentionDotIndex)
+                if (i == 0)
                     dotImage.color = Color.red;           // Highest attention dot is red
-                else if (i == secondHighestAttentionDotIndex)
+                else if (i == 1)
                     dotImage.color = new Color(1f, 0.5f, 0f);  // Second highest is orange
                 else
                     dotImage.color = Color.green;         // Remaining dots are green
@@ -368,45 +381,19 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
         }
 
         // Display the highest attention dot index if UI element is available
-        if (highestAttentionValuePoint != null && highestAttentionDotIndex >= 0 && highestAttentionDotIndex < 4)
+        if (highestAttentionValuePoint != null)
         {
-            highestAttentionValuePoint.text = $"  {highestAttentionDotIndex + 1}";  // Display 1-based index
+            highestAttentionValuePoint.text = "  1";  // Display 1-based index
         }
 
         // Connect the dots with dotted lines
-        for (int i = 0; i < dotList.Count - 1 && i < 4; i++)
+        for (int i = 0; i < dotList.Count - 1; i++)
         {
             GameObject startDot = dotList[i];
             GameObject endDot = dotList[i + 1];
             ConnectDotsWithDottedLine(startDot.transform.position, endDot.transform.position);
         }
     }
-
-    /*    private void ConnectDotsWithDottedLine(Vector3 start, Vector3 end)
-        {
-            float distance = Vector3.Distance(start, end);
-            int numberOfDots = Mathf.FloorToInt(distance / dotSpacing);  // Number of dots needed based on the spacing
-
-            for (int j = 0; j <= numberOfDots; j++)
-            {
-                // Calculate the interpolated position
-                float t = j / (float)numberOfDots;
-                Vector3 dotPosition = Vector3.Lerp(start, end, t);
-
-                // Instantiate a single dotted line prefab at the calculated position
-                GameObject dottedLine = Instantiate(dottedLinePrefab, canvasRectTransform);
-
-                // Set its position in screen space
-                dottedLine.transform.position = dotPosition;
-
-                // Optionally, adjust the scale or size if needed
-                RectTransform rectTransform = dottedLine.GetComponent<RectTransform>();
-                if (rectTransform != null)
-                {
-                    rectTransform.sizeDelta = new Vector2(5f, 5f);  // Adjust size for better visibility if needed
-                }
-            }
-        }*/
 
     private void ConnectDotsWithDottedLine(Vector3 start, Vector3 end)
     {
