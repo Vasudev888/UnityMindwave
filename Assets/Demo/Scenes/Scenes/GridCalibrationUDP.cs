@@ -641,6 +641,7 @@ public class GridCalibrationUDP : MonoBehaviour
             default:
                 // Fallback to primaryPositions if something unexpected happens
                 targetPosition = primaryPositions[currentIndex];
+                //####
                 break;
         }
 
