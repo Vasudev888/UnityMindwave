@@ -7,6 +7,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
+using static UnityEngine.GridBrushBase;
 
 public class GridCalibrationUDP : MonoBehaviour
 {
@@ -15,8 +16,9 @@ public class GridCalibrationUDP : MonoBehaviour
     [SerializeField] private RectTransform targetPrefab; // Prefab to instantiate and move between points
     [SerializeField] private RectTransform canvasRect;   // Canvas RectTransform to get canvas size
     [SerializeField] private float edgeMargin = 50f;     // Margin from edges to avoid truncation
-    [SerializeField] private float moveDuration = 1f;    // Duration for each move, adjustable in the inspector
+    [SerializeField] private float moveDuration = 2f;    // Duration for each move, adjustable in the inspector
     [SerializeField] private float rotationAngle = 360f; // Full rotation angle for each move
+    
     #endregion
 
     #region Client-related Variables
@@ -70,6 +72,10 @@ public class GridCalibrationUDP : MonoBehaviour
     [SerializeField] private Image gridImageResult;               // Reference to the image to be manipulated
     [SerializeField] private GameObject closeButton;    // Reference to the close button GameObject
     [SerializeField] private GameObject calibrationCompletePanel;
+    [SerializeField] private Image progressFillImage; // Assign your fill image in the inspector
+    [SerializeField] private int totalTurns = 12;
+    private int currentTurn = 0;
+    public AudioSource audioSource;
     #endregion
 
     #region Unity Lifecycle Methods
@@ -135,6 +141,8 @@ public class GridCalibrationUDP : MonoBehaviour
 
         }
 
+        progressFillImage = targetPrefab.GetChild(0).GetComponent<Image>();
+        progressFillImage.fillAmount = 0f;
 
     }
 
@@ -153,6 +161,16 @@ public class GridCalibrationUDP : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space)) // Press Space to simulate progress
+        {
+            currentTurn = Mathf.Clamp(currentTurn + 1, 0, totalTurns);
+
+            if (progressFillImage != null)
+            {
+                progressFillImage.fillAmount += 0.1f;
+               // Debug.Log($"Fill Amount Updated: {fillAmount}");
+            }
+        }
         // Receive data from the UDP client
         while (udpClient != null && udpClient.Available > 0)
         {
@@ -582,6 +600,7 @@ public class GridCalibrationUDP : MonoBehaviour
                 // Send the command via UDP to the Python server at port 5001
                 sendUdpClient.Send(data, data.Length, "127.0.0.1", 5001);
                 Debug.Log("Sent command: " + command);
+                audioSource.Play();
             }
             catch (Exception e)
             {
@@ -600,6 +619,28 @@ public class GridCalibrationUDP : MonoBehaviour
     private void MoveToNextPosition()
     {
         currentIndex++;
+
+        #region to fill UI progress bar
+        // Increment the current turn count
+        Debug.Log(" progressFillImage.fillAmount +++++++++++++++++++++++++++++++++++++++ " + progressFillImage.fillAmount);
+        currentTurn = Mathf.Clamp(currentTurn + 1, 0, totalTurns); // Ensure it doesn't exceed totalTurns
+
+        // Update the fill image
+        if (progressFillImage != null)
+        {
+            float fillAmount = (float)currentTurn / totalTurns;
+            progressFillImage.fillAmount = fillAmount; // Update fill amount
+        }
+
+        // Check if the cycle is complete
+        if (currentTurn >= totalTurns)
+        {
+            Debug.Log("Cycle complete!");
+            // Optionally, trigger some action here when the cycle completes
+        }
+        #endregion
+
+
 
         if (!isCalibrationActive)
         {
@@ -670,17 +711,46 @@ public class GridCalibrationUDP : MonoBehaviour
 
         // Recalculate the target position after index change
         //targetPosition = iterationCount < 2 ? primaryPositions[currentIndex] : extraPositions[currentIndex];
-       
 
+        #region original code
         // Calculate rotation direction based on the current index
-        float rotationDirection = (currentIndex % 2 == 0) ? -rotationAngle : rotationAngle;
+        //float rotationDirection = (currentIndex % 2 == 0) ? -rotationAngle : rotationAngle;
 
-        // Move and rotate the target to the new position
+        //// Move and rotate the target to the new position
+        //targetInstance.DOAnchorPos(targetPosition, moveDuration).SetEase(Ease.Linear).OnComplete(() => OnMovementComplete()); // Call OnMovementComplete when movement finishes
+
+        //targetInstance.DORotate(new Vector3(0, 0, rotationDirection), moveDuration, RotateMode.LocalAxisAdd);
+
+        //Debug.Log($"Moved to position: {targetPosition}, Rotation: {rotationDirection}");
+
+        #endregion
+
+        #region Nidhi UI Modification
+
+        // Calculate movement direction and set facing angle
+        Vector2 currentPos = targetInstance.anchoredPosition;
+        Vector2 direction = targetPosition - currentPos;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // Adjust scale based on movement direction
+        if (Mathf.Abs(direction.y)==0)
+        {
+            targetInstance.localScale = new Vector3(1, 1, 1); 
+        }
+        else
+        {
+          
+            targetInstance.localScale = new Vector3(1, -1, 1); 
+        }
+
+        // Adjust bird's facing direction
+        targetInstance.rotation = Quaternion.Euler(0, 0, angle); 
+
+        // Move the target to the new position
         targetInstance.DOAnchorPos(targetPosition, moveDuration).SetEase(Ease.Linear).OnComplete(() => OnMovementComplete()); // Call OnMovementComplete when movement finishes
+       #endregion
 
-        targetInstance.DORotate(new Vector3(0, 0, rotationDirection), moveDuration, RotateMode.LocalAxisAdd);
 
-        Debug.Log($"Moved to position: {targetPosition}, Rotation: {rotationDirection}");
     }
     #endregion
 
