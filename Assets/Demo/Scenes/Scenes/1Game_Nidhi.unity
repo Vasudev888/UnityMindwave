@@ -4246,7 +4246,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -22.199976, y: 0}
+  m_AnchoredPosition: {x: -12, y: 0}
   m_SizeDelta: {x: 1897.8, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &187050011
@@ -12185,7 +12185,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08e272e419b34b040b2e183e68080cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: http://localhost:81/sqlconnect/eegpost.php
 --- !u!4 &653846336
 Transform:
   m_ObjectHideFlags: 0
@@ -21414,7 +21413,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 7454210984458747694, guid: eb44fadbfd943194e85df7faf3a9dc5b,
         type: 3}
-      insertIndex: -1
+      insertIndex: 0
       addedObject: {fileID: 187050010}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb44fadbfd943194e85df7faf3a9dc5b, type: 3}
@@ -38865,6 +38864,7 @@ GameObject:
   - component: {fileID: 2120048226}
   - component: {fileID: 2120048225}
   - component: {fileID: 2120048228}
+  - component: {fileID: 2120048229}
   m_Layer: 0
   m_Name: ScriptsObject
   m_TagString: Untagged
@@ -38996,6 +38996,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   calibrationCanva: {fileID: 2022694822}
+--- !u!114 &2120048229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2120048216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99c9e4575bf8a7488c5cb0f5c6e5430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCanvas: {fileID: 145084827}
 --- !u!1 &2123201741
 GameObject:
   m_ObjectHideFlags: 0
