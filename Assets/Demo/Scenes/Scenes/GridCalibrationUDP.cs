@@ -76,6 +76,8 @@ public class GridCalibrationUDP : MonoBehaviour
     [SerializeField] private int totalTurns = 12;
     private int currentTurn = 0;
     public AudioSource audioSource;
+    public AudioClip Clip1, Clip2;
+    
     #endregion
 
     #region Unity Lifecycle Methods
@@ -148,10 +150,9 @@ public class GridCalibrationUDP : MonoBehaviour
 
     public void OnClickStartCalibration()
     {
-
-        // Start the calibration process automatically
         BeginCalibration();
-        //startCalibrationButton.SetActive(false);
+        audioSource.clip = Clip1;
+        audioSource.Play();
 
     }
 
@@ -449,6 +450,7 @@ public class GridCalibrationUDP : MonoBehaviour
         currentIndex = -1;
         iterationCount = 0;
         isCalibrationActive = true;
+        Debug.Log("yYyyyyyyyyyyyyyyyyyyyy");
         //SendScreenCalibrationCommand();
         MoveToNextPosition();
     }
@@ -600,12 +602,20 @@ public class GridCalibrationUDP : MonoBehaviour
                 // Send the command via UDP to the Python server at port 5001
                 sendUdpClient.Send(data, data.Length, "127.0.0.1", 5001);
                 Debug.Log("Sent command: " + command);
+                audioSource.clip = Clip2;
+                audioSource.loop = false;
                 audioSource.Play();
             }
             catch (Exception e)
             {
                 Debug.LogError("Error sending command: " + e.Message);
             }
+        }
+        else
+        {
+            audioSource.clip = Clip1; 
+            audioSource.Play(); 
+            audioSource.loop = true;
         }
     }
 
@@ -622,7 +632,7 @@ public class GridCalibrationUDP : MonoBehaviour
 
         #region to fill UI progress bar
         // Increment the current turn count
-        Debug.Log(" progressFillImage.fillAmount +++++++++++++++++++++++++++++++++++++++ " + progressFillImage.fillAmount);
+        //Debug.Log(" progressFillImage.fillAmount +++++++++++++++++++++++++++++++++++++++ " + progressFillImage.fillAmount);
         currentTurn = Mathf.Clamp(currentTurn + 1, 0, totalTurns); // Ensure it doesn't exceed totalTurns
 
         // Update the fill image
@@ -646,6 +656,10 @@ public class GridCalibrationUDP : MonoBehaviour
         {
             Debug.Log("Calibration is complete. No further movements.");
             return;
+        }
+        else
+        {
+            Debug.Log("Active........");
         }
 
         // Determine the target position based on the current iteration
