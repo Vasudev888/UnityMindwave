@@ -28,6 +28,7 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     public TextMeshProUGUI highBetaTextField;
     public TextMeshProUGUI lowGammaTextField;
     public TextMeshProUGUI highGammaTextField;
+    private string latestJSONFilePath;
 
     [SerializeField] private GridCalibrationUDP gridCalibrationUDP;
     private List<EEGData> eegDataList = new List<EEGData>();   // List to store all EEG data
@@ -300,6 +301,101 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
         latestCSVFilePath = filePath;
 
         Debug.Log("EEG data saved to: " + filePath);
+    }
+
+
+    /*public void SaveToJSON()
+    {
+        int count = eegDataList.Count;
+        string filePath = Path.Combine(Application.persistentDataPath, "EEGData_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".json");
+
+        // Create a JSON object
+        var jsonData = new
+        {
+            Username = UserData.Instance.Username,
+            CompanyName = UserData.Instance.CompanyName,
+            Age = UserData.Instance.Age,
+            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            EEGData = eegDataList.Select(data => new
+            {
+                data.timestamp,
+                data.attentionValue,
+                data.sessionTime,
+                data.meditationValue,
+                data.blinkStrength,
+                data.delta,
+                data.theta,
+                data.lowAlpha,
+                data.highAlpha,
+                data.lowBeta,
+                data.highBeta,
+                data.lowGamma,
+                data.highGamma,
+                data.gazePosition
+            }).ToList()
+        };
+
+        string jsonString = JsonUtility.ToJson(jsonData, true);
+        File.WriteAllText(filePath, jsonString);
+
+        latestJSONFilePath = filePath;
+        Debug.Log("EEG data saved to: " + filePath);
+    }*/
+
+    private IEnumerator SendJSONToAPI(string url)
+    {
+        int count = eegDataList.Count;
+
+        var jsonData = new
+        {
+            Username = UserData.Instance.Username,
+            CompanyName = UserData.Instance.CompanyName,
+            Age = UserData.Instance.Age,
+            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            EEGData = eegDataList.Select(data => new
+            {
+                data.timestamp,
+                data.attentionValue,
+                data.sessionTime,
+                data.meditationValue,
+                data.blinkStrength,
+                data.delta,
+                data.theta,
+                data.lowAlpha,
+                data.highAlpha,
+                data.lowBeta,
+                data.highBeta,
+                data.lowGamma,
+                data.highGamma,
+                data.gazePosition
+            }).ToList()
+        };
+
+        string jsonString = JsonUtility.ToJson(jsonData, true);
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
+            request.uploadHandler = new UploadHandlerRaw(jsonBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("JSON Data sent successfully!");
+            }
+            else
+            {
+                Debug.LogError("Error sending JSON: " + request.error);
+            }
+        }
+    }
+
+    public void SendJsonAPIButton()
+    {
+        StartCoroutine(SendJSONToAPI("https://your-api-endpoint.com/data"));
     }
 
 

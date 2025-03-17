@@ -57,6 +57,7 @@ public class GridCalibrationUDP : MonoBehaviour
     public float intensity = 0.1f;          // Intensity of the heatmap brush
     public RawImage heatmapDisplay;         // UI element to display the heatmap
     [SerializeField] private float orangeIntensity = 1.0f; // Increase to make the transition to orange faster
+    [SerializeField] MindwaveDataVisualizerNew mindwaveDataVisualizer;
 
 
 
@@ -231,8 +232,9 @@ public class GridCalibrationUDP : MonoBehaviour
             int xHeatmap = Mathf.Clamp(latestScreenPosition.x * heatmapWidth / Screen.width, 0, heatmapWidth - 1);
             int yHeatmap = Mathf.Clamp(latestScreenPosition.y * heatmapHeight / Screen.height, 0, heatmapHeight - 1);
 
+            float attentionValuez = mindwaveDataVisualizer.GetAttentionValue();
             // Apply brush to the heatmap at the gaze position
-            ApplyBrush(xHeatmap, yHeatmap);
+            ApplyBrush(xHeatmap, yHeatmap, attentionValuez);
 
             // Apply changes to the heatmap texture
             heatmapTexture.Apply();
@@ -286,64 +288,12 @@ public class GridCalibrationUDP : MonoBehaviour
     /// </summary>
     /// <param name="xCenter">X-coordinate of the brush center.</param>
     /// <param name="yCenter">Y-coordinate of the brush center.</param>
-/*    private void ApplyBrush(int xCenter, int yCenter)
+
+    private void ApplyBrush(int xCenter, int yCenter, float attentionvalue)
     {
-        int radius = brushSize / 2;
+        if (attentionvalue <= 30)
+            return;
 
-
-        // Choose a sigma value for Gaussian spread (adjust to taste).
-        // A third of the radius is a common choice, but you can tweak this.
-        float sigma = radius / 3f;
-        float twoSigmaSquare = 2 * sigma * sigma;
-
-        for (int x = xCenter - radius; x <= xCenter + radius; x++)
-        {
-            for (int y = yCenter - radius; y <= yCenter + radius; y++)
-            {
-                // Check if the coordinates are within the heatmap bounds
-                if (x >= 0 && x < heatmapWidth && y >= 0 && y < heatmapHeight)
-                {
-                    // Calculate the distance from the center   
-                    float dx = x - xCenter;
-                    float dy = y - yCenter;
-                    float distanceSquare = dx * dx + dy * dy;
-                    float distance = Mathf.Sqrt(distanceSquare);
-
-                    if (distance <= radius)
-                    {
-                        // Gaussian-like intensity addition
-                        float gaussian = Mathf.Exp(-distanceSquare / twoSigmaSquare);
-                        float addition = intensity * gaussian;
-                        heatmapData[x, y] += addition;
-
-                        // Calculate final intensity (0 to 1)
-                        float clampedIntensity = Mathf.Clamp01(heatmapData[x, y]);
-
-                        // Starting color: green at low intensity
-                        Color startColor = Color.green;
-                        // Target color: orange at high intensity
-                        Color targetColor = new Color(1f, 0.5f, 0f, 1f);
-
-                        // Interpolate from green to orange based on intensity and orangeIntensity factor
-                        Color finalColor = Color.Lerp(startColor, targetColor, clampedIntensity * orangeIntensity);
-
-                        // Set the alpha to represent how "intense" this pixel is
-                        finalColor.a = clampedIntensity;
-
-                        int invertedY = (heatmapHeight - 1) - y;
-                        // Update the pixel in the texture
-                        heatmapTexture.SetPixel(x, invertedY, finalColor);
-                    }
-                }
-            }
-        }
-
-        // Apply all pixel changes to the texture at once for efficiency
-        heatmapTexture.Apply();
-    }*/
-
-    private void ApplyBrush(int xCenter, int yCenter)
-    {
         int radius = brushSize / 2;
 
         // Sigma value for Gaussian spread
@@ -367,7 +317,8 @@ public class GridCalibrationUDP : MonoBehaviour
                         // Gaussian intensity calculation
                         float gaussian = Mathf.Exp(-distanceSquare / twoSigmaSquare);
                         float addition = intensity * gaussian;
-                        heatmapData[x, y] += addition;
+                        //heatmapData[x, y] += addition;
+                        heatmapData[x, y] = Mathf.Clamp01(heatmapData[x, y] + addition);
 
                         // Clamp the intensity between 0 and 1
                         float clampedIntensity = Mathf.Clamp01(heatmapData[x, y]);
