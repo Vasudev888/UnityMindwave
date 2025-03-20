@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Text;
 using Newtonsoft.Json;
 using TMPro;
+using UnityEditor.PackageManager.Requests;
 
 public class TestEEGAPI : MonoBehaviour
 {
@@ -13,7 +14,9 @@ public class TestEEGAPI : MonoBehaviour
     //[SerializeField] private Image image;
     [SerializeField]TextMeshProUGUI responseText;  // Assign this in the Inspector
     string userID = "b4e4daee-4ed8-4f8d-bfa1-5e8c2d0650c9";
-
+    public GameObject AnalysisTextScrollObject;
+    public TextMeshProUGUI AnalysisTextField;
+    string response;
 
     private IEnumerator SendJSONToAPI(string url)
     { 
@@ -56,7 +59,8 @@ public class TestEEGAPI : MonoBehaviour
             {
                 Debug.Log("JSON Data sent successfully!");
                 Debug.Log("Response: " + request.downloadHandler.text);
-                string response = request.downloadHandler.text;
+               // string response = request.downloadHandler.text;
+                 response = request.downloadHandler.text;
                 responseText.text = "API Response: " + response;
             }
             else
@@ -72,5 +76,12 @@ public class TestEEGAPI : MonoBehaviour
        
         StartCoroutine(SendJSONToAPI("http://127.0.0.1:5000/upload"));
         //userID = Registration.Instance.GetUserID();
+        AnalysisTextScrollObject.SetActive(false);
+    }
+
+    public void AIAnalysisClick()
+    {
+        AnalysisTextScrollObject.SetActive(true);
+        AnalysisTextField.text = response;
     }
 }
