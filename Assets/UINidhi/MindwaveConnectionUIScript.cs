@@ -28,6 +28,7 @@ public class MindwaveConnectionUIScript : MonoBehaviour
     private int m_EEGValue = 0;
     private int m_BlinkStrength = 0;
 
+
     #endregion
 
 

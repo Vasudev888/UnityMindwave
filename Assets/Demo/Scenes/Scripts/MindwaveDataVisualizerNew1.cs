@@ -10,15 +10,11 @@ using System;
 using UnityEngine.EventSystems;
 using System.Linq;
 
-public class MindwaveDataVisualizerNew : MonoBehaviour
+public class MindwaveDataVisualizerNew1 : MonoBehaviour
 {
     private MindwaveController m_Controller;
     private int m_BlinkStrength = 0;
     private bool isSessionActive = false;   // Flag to track if a session is running
-    
-    [Header("Simulation Settings")]
-    [SerializeField] private float simulationUpdateRate = 0.1f;  // How often to update fake data (seconds)
-    
     public Image attentionFillImage;
     public TextMeshProUGUI attentionTextField;
     public Image meditationFillImage;
@@ -51,7 +47,6 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     private GameObject tooltipInstance;
 
     private float lastAttentionValue;
-    private float lastMeditationValue;
     private Coroutine tooltipCoroutine;
     [SerializeField] private TextMeshProUGUI highestAttentionTextField;
     [SerializeField] private TextMeshProUGUI highestAttentionValuePoint;
@@ -132,14 +127,8 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     {
         //userID = Registration.Instance.GetUserID();
         //PlaceDotsOnScreen(eegDataList);
-        
-        // SIMPLE SIMULATION - Just start generating fake data
-        StartCoroutine(GenerateFakeData());
-        
-        // ORIGINAL MINDWAVE CODE - COMMENTED OUT
-        // MindwaveManager.Instance.Controller.OnUpdateMindwaveData += OnMindwaveDataUpdated;
-        // m_Controller.OnUpdateBlink += OnBlinkUpdated;
-        
+        MindwaveManager.Instance.Controller.OnUpdateMindwaveData += OnMindwaveDataUpdated;
+        m_Controller.OnUpdateBlink += OnBlinkUpdated;
         userId = Registration.Instance.GetUserID();  // Assuming Singleton.Instance.UserId stores the user_id
     }
 
@@ -268,11 +257,6 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     public float GetAttentionValue()
     {
         return lastAttentionValue;  // Assuming 'lastAttentionValue' is tracking the most recent attention value
-    }
-    
-    public float GetMeditationValue()
-    {
-        return lastMeditationValue;  // Get the most recent meditation value
     }
 
     // Save the captured EEG data to a CSV file
@@ -646,7 +630,6 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
     }
 
 
-
     //Sending to backend PHP
 
     public void PostEEGData()
@@ -690,58 +673,5 @@ public class MindwaveDataVisualizerNew : MonoBehaviour
         }
     }
 
-    // SIMPLE FAKE DATA GENERATION
-    private IEnumerator GenerateFakeData()
-    {
-        while (true)
-        {
-            // Create fake MindWave data
-            MindwaveDataModel fakeData = new MindwaveDataModel();
-            
-            // Fake eSense data
-            int attentionValue = UnityEngine.Random.Range(30, 80);
-            int meditationValue = UnityEngine.Random.Range(20, 70);
-            
-            fakeData.eSense = new MindwaveDataESenseModel
-            {
-                attention = attentionValue,
-                meditation = meditationValue
-            };
-            
-            // Track the values for AI analysis
-            lastAttentionValue = attentionValue;
-            lastMeditationValue = meditationValue;
-            
-            // Fake EEG power data
-            fakeData.eegPower = new MindwaveDataEegPowerModel
-            {
-                delta = UnityEngine.Random.Range(1000000, 3000000),
-                theta = UnityEngine.Random.Range(50000, 100000),
-                lowAlpha = UnityEngine.Random.Range(10000, 30000),
-                highAlpha = UnityEngine.Random.Range(5000, 15000),
-                lowBeta = UnityEngine.Random.Range(5000, 20000),
-                highBeta = UnityEngine.Random.Range(2500, 10000),
-                lowGamma = UnityEngine.Random.Range(1000, 5000),
-                highGamma = UnityEngine.Random.Range(500, 2000)
-            };
-            
-            // Fake connection status
-            fakeData.poorSignalLevel = 0; // Good signal
-            fakeData.status = "connected";
-            
-            // Process the fake data
-            OnMindwaveDataUpdated(fakeData);
-            
-            // Fake blink occasionally
-            if (UnityEngine.Random.Range(0f, 1f) < 0.1f)
-            {
-                m_BlinkStrength = UnityEngine.Random.Range(1, 5);
-                OnBlinkUpdated(m_BlinkStrength);
-            }
-            
-            yield return new WaitForSeconds(simulationUpdateRate); // Use tweakable update rate
-        }
-    }
 
 }
-

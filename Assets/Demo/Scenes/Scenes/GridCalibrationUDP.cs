@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
@@ -54,10 +54,17 @@ public class GridCalibrationUDP : MonoBehaviour
     public int heatmapWidth = 1280;         // Width of the heatmap texture
     public int heatmapHeight = 720;         // Height of the heatmap texture
     public int brushSize = 20;              // Size of the brush for heatmap updates
-    public float intensity = 0.1f;          // Intensity of the heatmap brush
+    public float intensity = 0.05f;         // Intensity of the heatmap brush (reduced to make red harder to reach)
     public RawImage heatmapDisplay;         // UI element to display the heatmap
     [SerializeField] private float orangeIntensity = 1.0f; // Increase to make the transition to orange faster
     [SerializeField] MindwaveDataVisualizerNew mindwaveDataVisualizer;
+    [Header("Color Ramp (Yellow→Green→Red)")]
+    public Gradient colorGradient;
+    [Header("Heatmap Color Settings")]
+    [SerializeField] private Color startColor = Color.yellow;      // Starting color for low intensity
+    [SerializeField] private Color midColor = Color.green;         // Middle color
+    [SerializeField] private Color endColor = Color.red;           // End color for high intensity (revisits)
+    [SerializeField] private float redThreshold = 0.80f;           // Minimum intensity to show red (nucleus effect)
 
 
 
@@ -66,6 +73,9 @@ public class GridCalibrationUDP : MonoBehaviour
     private Vector2Int latestScreenPosition = Vector2Int.zero; // Latest gaze position received
     private bool hasNewData = false;                    // Flag to indicate new gaze data received
     private bool isBrushActive = false;                  // Flag to control heatmap generation
+    private float decayRate = 0.01f;                    // Rate at which heatmap intensity decays over time
+    private float lastDecayTime = 0f;                   // Time of last decay update
+    private float decayInterval = 0.1f;                 // Interval between decay updates (in seconds)
     #endregion
 
     #region UI Elements
@@ -241,6 +251,13 @@ public class GridCalibrationUDP : MonoBehaviour
 
             hasNewData = false; // Reset the flag after processing
         }
+
+        // Apply decay to heatmap data periodically
+        if (isBrushActive && Time.time - lastDecayTime >= decayInterval)
+        {
+            ApplyHeatmapDecay();
+            lastDecayTime = Time.time;
+        }
     }
 
     #endregion
@@ -289,7 +306,7 @@ public class GridCalibrationUDP : MonoBehaviour
     /// <param name="xCenter">X-coordinate of the brush center.</param>
     /// <param name="yCenter">Y-coordinate of the brush center.</param>
 
-    private void ApplyBrush(int xCenter, int yCenter, float attentionvalue)
+    /*private void ApplyBrush(int xCenter, int yCenter, float attentionvalue)
     {
         if (attentionvalue <= 30)
             return;
@@ -319,6 +336,7 @@ public class GridCalibrationUDP : MonoBehaviour
                         float addition = intensity * gaussian;
                         //heatmapData[x, y] += addition;
                         heatmapData[x, y] = Mathf.Clamp01(heatmapData[x, y] + addition);
+                        Color finalColor;
 
                         // Clamp the intensity between 0 and 1
                         float clampedIntensity = Mathf.Clamp01(heatmapData[x, y]);
@@ -326,7 +344,7 @@ public class GridCalibrationUDP : MonoBehaviour
                         // Color interpolation from green to orange
                         Color startColor = Color.green;  // Starting color at low intensity
                         Color targetColor = new Color(1f, 0.5f, 0f, 1f);  // Orange at high intensity
-                        Color finalColor = Color.Lerp(startColor, targetColor, clampedIntensity);
+                        finalColor = Color.Lerp(startColor, targetColor, clampedIntensity);
 
                         // Ensure alpha is proportional to intensity for smooth blending
                         finalColor.a = clampedIntensity;
@@ -341,8 +359,201 @@ public class GridCalibrationUDP : MonoBehaviour
 
         // Apply changes to the texture
         heatmapTexture.Apply();
+    }*/
+
+
+    /*private void ApplyBrush(int xCenter, int yCenter, float attentionvalue)
+    {
+*//*        if (attentionvalue <= 30)
+            return;*//*
+
+        int radius = brushSize / 2;
+
+        // Sigma value for Gaussian spread
+        float sigma = radius / 4f;
+        float twoSigmaSquare = 2 * sigma * sigma;
+
+        for (int x = xCenter - radius; x <= xCenter + radius; x++)
+        {
+            for (int y = yCenter - radius; y <= yCenter + radius; y++)
+            {
+                // Ensure coordinates are within bounds
+                if (x >= 0 && x < heatmapWidth && y >= 0 && y < heatmapHeight)
+                {
+                    // Distance from the brush center
+                    float dx = x - xCenter;
+                    float dy = y - yCenter;
+                    float distanceSquare = dx * dx + dy * dy;
+
+                    if (distanceSquare <= radius * radius)
+                    {
+                        // Gaussian intensity calculation
+                        float gaussian = Mathf.Exp(-distanceSquare / twoSigmaSquare);
+                        //float addition = intensity * gaussian;
+                        float addition = intensity * gaussian;
+
+                        // Update heatmap data with clamped value
+                        heatmapData[x, y] = Mathf.Clamp01(heatmapData[x, y] + addition) ;
+
+                        // Clamp the intensity between 0 and 1
+                        float clampedIntensity = Mathf.Clamp01(heatmapData[x, y]);
+
+                        // Multi-step color interpolation
+                        Color finalColor = colorGradient.Evaluate(clampedIntensity);
+                        finalColor.a = clampedIntensity;
+                        if (clampedIntensity < 0.5f)
+                        {
+                            // Green to Yellow transition (0.0 to 0.5)
+                            float t = clampedIntensity / 0.5f;
+                            finalColor = Color.Lerp(Color.green, Color.yellow, t);
+                        }
+                        else
+                        {
+                            // Yellow to Orange transition (0.5 to 1.0)
+                            float t = (clampedIntensity - 0.5f) / 0.5f;
+                            Color orange = new Color(1f, 0.5f, 0f);
+                            finalColor = Color.Lerp(Color.yellow, orange, t);
+                        }
+
+                        // Make alpha match the intensity for smoother blending
+                        finalColor.a = clampedIntensity;
+
+                        // Invert Y to match Unity texture coordinates
+                        int invertedY = (heatmapHeight - 1) - y;
+
+                        // Update the texture pixel
+                        heatmapTexture.SetPixel(x, invertedY, finalColor);
+                    }
+                }
+            }
+        }
+
+        // Apply changes to the texture
+        heatmapTexture.Apply();
+    }*/
+
+    private Color EvaluateRainbow(float t)
+    {
+        // 5 stops: blue, cyan, green, yellow, red
+        if (t < 0.30f)
+        {
+            // blue → cyan
+            return Color.Lerp(Color.yellow, Color.green, t / 0.30f);
+        }
+        else if (t < 0.60f)
+        {
+            // cyan → green
+            return Color.Lerp(Color.yellow, Color.green, (t - 0.30f) / 0.30f);
+        }
+        else if (t < 0.85f)
+        {
+            // green → yellow
+            return Color.Lerp(Color.green, Color.yellow, (t - 0.60f) / 0.25f);
+        }
+        else
+        {
+            // yellow → red (only 15% of the ramp)
+            return Color.Lerp(Color.yellow, Color.red, (t - 0.75f) / 0.25f);
+        }
     }
 
+    private Color EvaluateEnhancedRainbow(float t)
+    {
+        // Color mapping: yellow → green → red (for revisits)
+        // Normalize t to 0-1 range for the base colors
+        float normalizedT = Mathf.Clamp01(t);
+        
+        if (normalizedT < redThreshold)
+        {
+            // yellow → green (most of the range)
+            return Color.Lerp(startColor, midColor, normalizedT / redThreshold);
+        }
+        else
+        {
+            // green → red (only in nucleus - very small area)
+            return Color.Lerp(midColor, endColor, (normalizedT - redThreshold) / (1f - redThreshold));
+        }
+    }
+
+
+    private void ApplyBrush(int xCenter, int yCenter, float attentionvalue)
+    {
+        int radius = brushSize / 2;
+        // Make the Gaussian more concentrated by reducing sigma
+        float sigma = radius / 6f; // More concentrated than before
+        float twoSigmaSq = 2f * sigma * sigma;
+
+        for (int x = xCenter - radius; x <= xCenter + radius; x++)
+            for (int y = yCenter - radius; y <= yCenter + radius; y++)
+            {
+                if (x < 0 || x >= heatmapWidth || y < 0 || y >= heatmapHeight) continue;
+                float dx = x - xCenter, dy = y - yCenter;
+                float d2 = dx * dx + dy * dy;
+                if (d2 > radius * radius) continue;
+
+                // More concentrated Gaussian distribution
+                float g = Mathf.Exp(-d2 / twoSigmaSq);
+                
+                // Apply distance-based intensity reduction for more nucleus-like effect
+                float distanceFromCenter = Mathf.Sqrt(d2);
+                float distanceFactor = Mathf.Clamp01(1f - (distanceFromCenter / radius));
+                g *= distanceFactor * distanceFactor; // Square the distance factor for sharper falloff
+                
+                // Calculate intensity multiplier based on current heatmap value
+                // Higher existing values get higher multipliers to intensify revisits
+                float currentIntensity = heatmapData[x, y];
+                float intensityMultiplier = 1f + (currentIntensity * 2f); // Stronger intensification for revisits
+                
+                // Add intensity with multiplier, but allow values to exceed 1.0 for more dramatic effects
+                float newIntensity = currentIntensity + (intensity * g * intensityMultiplier);
+                heatmapData[x, y] = Mathf.Clamp(newIntensity, 0f, 1.0f); // Keep values within 0-1 range
+
+                float t = heatmapData[x, y];
+
+                // Enhanced rainbow mapping that shows more red for higher intensities
+                Color col = EvaluateEnhancedRainbow(t);
+                col.a = Mathf.Clamp01(t); // Keep alpha between 0 and 1
+
+                int invY = heatmapHeight - 1 - y;
+                heatmapTexture.SetPixel(x, invY, col);
+            }
+
+        heatmapTexture.Apply();
+    }
+
+    /// <summary>
+    /// Applies gradual decay to heatmap data to prevent indefinite accumulation
+    /// </summary>
+    private void ApplyHeatmapDecay()
+    {
+        bool needsUpdate = false;
+        
+        for (int x = 0; x < heatmapWidth; x++)
+        {
+            for (int y = 0; y < heatmapHeight; y++)
+            {
+                if (heatmapData[x, y] > 0f)
+                {
+                    // Apply decay
+                    heatmapData[x, y] = Mathf.Max(0f, heatmapData[x, y] - decayRate);
+                    
+                    // Update texture pixel
+                    float t = heatmapData[x, y];
+                    Color col = EvaluateEnhancedRainbow(t);
+                    col.a = Mathf.Clamp01(t);
+                    
+                    int invY = heatmapHeight - 1 - y;
+                    heatmapTexture.SetPixel(x, invY, col);
+                    needsUpdate = true;
+                }
+            }
+        }
+        
+        if (needsUpdate)
+        {
+            heatmapTexture.Apply();
+        }
+    }
 
     public void ToggleBrushApplication()
     {

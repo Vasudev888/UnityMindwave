@@ -133,7 +133,8 @@ public class AttentionScreenshot : MonoBehaviour
 
     [Header("Database Settings")]
     string serverUrl = "http://localhost:81/sqlconnect/ssnew.php";
-    public string userId; // Default user ID, can be set from elsewhere
+    string userId; // Default user ID, can be set from elsewhere
+    private int counter = 1;
 
     void Start()
     {
@@ -147,10 +148,12 @@ public class AttentionScreenshot : MonoBehaviour
             Directory.CreateDirectory(folderPath);
         }
         string timestamp = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-         fileName = $"Screenshot_{timestamp}.png";
+        userId = Registration.Instance.GetUserID();
+        //fileName = $"Screenshot_{timestamp}.png";
+         fileName = $"{userId}_{counter++}.png";
         /*screenshotFilePath = Path.Combine(Application.persistentDataPath, fileName);*/
         screenshotFilePath = Path.Combine(folderPath, fileName);
-        userId = Registration.Instance.GetUserID();
+       
     }
 
     // Start capturing screenshots every 2 seconds

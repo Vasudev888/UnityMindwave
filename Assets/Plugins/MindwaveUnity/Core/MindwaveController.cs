@@ -377,12 +377,12 @@ public class MindwaveController : MonoBehaviour
 
 		public bool IsConnecting
 		{
-			get { return m_PendingConnection; }
+			get { return false; } // SIMULATION: Never show as connecting
 		}
 
 		public bool IsConnected
 		{
-			get { return m_ConnectedFlag; }
+			get { return true; } // SIMULATION: Always show as connected
 		}
 
 		public float TimeoutTimer
